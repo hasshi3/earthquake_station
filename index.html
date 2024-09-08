@@ -22,54 +22,53 @@
         });
 
         // GitHubのファイルのURL
-fetch('https://raw.githubusercontent.com/hasshi3/earthquake_station/main/stations.geojson')
-    .then(response => response.json())
-    .then(geojson => {
-        console.log("GeoJSON data loaded successfully:", geojson);
+        fetch('https://raw.githubusercontent.com/hasshi3/earthquake_station/main/stations.geojson')
+            .then(response => response.json())
+            .then(geojson => {
+                console.log("GeoJSON data loaded successfully:", geojson);
 
-        function onEachFeature(feature, layer) {
-            console.log("Processing feature:", feature);
-            if (feature.properties && feature.properties.name) {
-                layer.bindPopup(feature.properties.name);
-            }
-        }
+                function onEachFeature(feature, layer) {
+                    console.log("Processing feature:", feature);
+                    if (feature.properties && feature.properties.name) {
+                        layer.bindPopup(feature.properties.name);
+                    }
+                }
 
-        function styles(feature) {
-            console.log("Applying styles for feature type:", feature.geometry.type);
-            switch (feature.geometry.type) {
-                case "Point": return {
-                    radius: 8,
-                    fillColor: "#ff7800",
-                    color: "#000",
-                    weight: 1,
-                    opacity: 1,
-                    fillOpacity: 0.6,
-                };
-                case "LineString": return {
-                    color: "#4f6bdb",
-                    lineCap: 'square',
-                    weight: 5,
-                    opacity: .8
-                };
-                case "Polygon": return {
-                    color: "#34ccea8b",
-                    fillColor: "#ea3483"
-                };
-            }
-        }
+                function styles(feature) {
+                    console.log("Applying styles for feature type:", feature.geometry.type);
+                    switch (feature.geometry.type) {
+                        case "Point": return {
+                            radius: 8,
+                            fillColor: "#ff7800",
+                            color: "#000",
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.6,
+                        };
+                        case "LineString": return {
+                            color: "#4f6bdb",
+                            lineCap: 'square',
+                            weight: 5,
+                            opacity: .8
+                        };
+                        case "Polygon": return {
+                            color: "#34ccea8b",
+                            fillColor: "#ea3483"
+                        };
+                        default: return {}; // デフォルトのスタイルを指定
+                    }
+                }
 
-        L.geoJSON(geojson, {
-            onEachFeature: onEachFeature,
-            pointToLayer: function (feature, latlng) {
-                console.log("Creating marker for point:", latlng);
-                return L.circleMarker(latlng);
-            },
-            style: styles
-        }).addTo(map);
-    })
-    .catch(error => console.error('Error loading GeoJSON:', error));
-
-
+                L.geoJSON(geojson, {
+                    onEachFeature: onEachFeature,
+                    pointToLayer: function (feature, latlng) {
+                        console.log("Creating marker for point:", latlng);
+                        return L.circleMarker(latlng, styles(feature)); // スタイルオプションを追加
+                    },
+                    style: styles // 追加のスタイルオプションを適用
+                }).addTo(map);
+            })
+            .catch(error => console.error('Error loading GeoJSON:', error));
     </script>
 </body>
 </html>
