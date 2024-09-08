@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoJSON from GitHub</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <div id="myMap" style="height: 600px;"></div>
+    <script>
+        const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+
+        var map = L.map('myMap', {
+            center: [32.639884, 130.987154],
+            zoom: 8,
+            layers: [osm]
+        });
+
+        // GitHubのファイルのURL
+fetch('https://raw.githubusercontent.com/hasshi3/GeoJason_Leaflet2/main/geojson_data.json')
+    .then(response => response.json())
+    .then(geojson => {
+        console.log("GeoJSON data loaded successfully:", geojson);
+
+        function onEachFeature(feature, layer) {
+            console.log("Processing feature:", feature);
+            if (feature.properties && feature.properties.name) {
+                layer.bindPopup(feature.properties.name);
+            }
+        }
+
+        function styles(feature) {
+            console.log("Applying styles for feature type:", feature.geometry.type);
+            switch (feature.geometry.type) {
+                case "Point": return {
+                    radius: 8,
+                    fillColor: "#ff7800",
+                    color: "#000",
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.6,
+                };
+                case "LineString": return {
+                    color: "#4f6bdb",
+                    lineCap: 'square',
+                    weight: 5,
+                    opacity: .8
+                };
+                case "Polygon": return {
+                    color: "#34ccea8b",
+                    fillColor: "#ea3483"
+                };
+            }
+        }
+
+        L.geoJSON(geojson, {
+            onEachFeature: onEachFeature,
+            pointToLayer: function (feature, latlng) {
+                console.log("Creating marker for point:", latlng);
+                return L.circleMarker(latlng);
+            },
+            style: styles
+        }).addTo(map);
+    })
+    .catch(error => console.error('Error loading GeoJSON:', error));
+
+
+    </script>
+</body>
+</html>
