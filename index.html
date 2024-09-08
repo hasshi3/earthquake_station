@@ -22,7 +22,7 @@
         });
 
         // GitHubのファイルのURL
-        fetch('https://raw.githubusercontent.com/hasshi3/earthquake_station/main/stations.geojson')
+        fetch('https://hasshi3.github.io/earthquake_station/stations.geojson')
             .then(response => response.json())
             .then(geojson => {
                 console.log("GeoJSON data loaded successfully:", geojson);
