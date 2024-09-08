@@ -29,8 +29,8 @@
 
                 function onEachFeature(feature, layer) {
                     console.log("Processing feature:", feature);
-                    if (feature.properties && feature.properties.name) {
-                        layer.bindPopup(feature.properties.name);
+                if (feature.properties && feature.properties.station_name) {
+                    layer.bindPopup(feature.properties.station_name);
                     }
                 }
 
